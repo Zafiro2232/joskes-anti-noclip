@@ -1,2 +1,4 @@
-# joskes-anti-noclip
-My reupload and resupport for Joske's Anti-Noclip PVP addon
+# Joske's Anti-Noclip PVP Reupload
+My Reupload and continued support for this great addon. 
+
+Workshop Link: http://steamcommunity.com/sharedfiles/filedetails/?id=855177116
