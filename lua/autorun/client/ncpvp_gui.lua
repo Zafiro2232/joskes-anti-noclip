@@ -140,3 +140,12 @@ end
 net.Receive("NCPVPGui-Open", function(len, ply)
     NCPVPGui()
 end)
+
+net.Receive("NCPVP-NetNotify", function(len,ply)
+    local damage = net.ReadInt(32)
+	local target = net.ReadEntity()
+	local tcolor = team.GetColor(target:Team())
+	if target:IsPlayer() then
+		chat.AddText( Color(58,68,78),"NCPVP | ",Color( 78, 88, 98), tostring(damage), " damage was mitigated from ", Color(tcolor.r,tcolor.g,tcolor.b,tcolor.a) , target:Nick(), Color(78,88,98),  ", leave noclip to do damage."  )
+	end
+end)

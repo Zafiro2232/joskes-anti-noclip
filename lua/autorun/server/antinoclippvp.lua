@@ -8,12 +8,9 @@
 --]]
 --================================================
 local SH = "ncpvp_"
-util.AddNetWorkString("NCPVP-NetBridge")
-util.AddNetWorkString("NCPVPGui-Open")
-CreateConVar(SH .. "notify", 1, FCVAR_NONE, "Pass 0 to turn off messages, 1 to turn on")
-CreateConVar(SH .. "mode", 1, FCVAR_NONE, "NCPVP Modes, 0 = Attacker can damage other players, 1 = Prevent Damage, 2 = Disable noclip upon attacking, 3 = Disable noclip and damage upon attacking, 4 = Slay attacker")
-CreateConVar(SH .. "mode_admins", FCVAR_NONE, "Allows Admins to damage whilst nocliped, 1 = allow, 0 = disallow")
-CreateConVar(SH .. "mode_sadmins", 1, FCVAR_NONE, "Allows SuperAdmins to damage whilst nocliped, 1 = allow, 0 = disallow")
+util.AddNetworkString("NCPVP-NetNotify")
+util.AddNetworkString("NCPVP-NetBridge")
+util.AddNetworkString("NCPVPGui-Open")
 
 concommand.Add(SH .. "credits", function(ply)
     ply:SendLua("print( [[Joske(nigelarmy.com) - Original Script/Idea, Linkjay(linkjay1.com) - Reupload/Modifications, Zafiro(#2602) - V2 Redux]] )")
@@ -24,25 +21,31 @@ local antispam = 0
 local ncpvp_mode_admins = GetConVar(SH .. "mode_admins")
 local ncpvp_mode_sadmins = GetConVar(SH .. "mode_sadmins")
 local ncpvp_mode = GetConVar(SH .. "mode")
-local ncpvp_notify = GetConVar(SH .. " not")
-
+local ncpvp_notify = GetConVar(SH .. "notify")
+CreateConVar(SH .. "notify", 1, FCVAR_NONE, "Pass 0 to turn off messages, 1 to turn on")
+CreateConVar(SH .. "mode", 1, FCVAR_NONE, "NCPVP Modes, 0 = Attacker can damage other players, 1 = Prevent Damage, 2 = Disable noclip upon attacking, 3 = Disable noclip and damage upon attacking, 4 = Slay attacker")
+CreateConVar(SH .. "mode_admins", FCVAR_NONE, "Allows Admins to damage whilst nocliped, 1 = allow, 0 = disallow")
+CreateConVar(SH .. "mode_sadmins", 1, FCVAR_NONE, "Allows SuperAdmins to damage whilst nocliped, 1 = allow, 0 = disallow")
 hook.Add("EntityTakeDamage", "NCPVPScale", function(ent, dmginfo)
-    local notify = ncpvp_notify:GetInt()
-    local mode = ncpvp_mode:GetInt()
-    local allowadmins = ncpvp_mode_admins:GetInt()
-    local allowsuperadmins = ncpvp_mode_sadmins:GetInt()
-    local att = dmginfo:GetAttacker()
+	local notify = ncpvp_notify:GetInt()
+	local mode = ncpvp_mode:GetInt()
+	local NetDMG = dmginfo:GetDamage()
+	local allowadmins = ncpvp_mode_admins:GetInt()
+	local allowsuperadmins = ncpvp_mode_sadmins:GetInt()
+	local att = dmginfo:GetAttacker()
 
-    local function NCSendMsg()
-        antispam = 1
+	local function NCSendMsg()
+		antispam = 1
 
-        timer.Simple(1, function()
-            antispam = 0
-        end)
+		timer.Simple(1, function()
+			antispam = 0
+		end)
 
-        att:SendLua("chat.AddText( Color( 0, 255, 0), '[NCPVP] ', Color( 0, 255, 255 ), 'Redacted ' .. tostring(meme)  .. ' damage to ent'  )")
+		net.Start("NCPVP-NetNotify")
+		net.WriteInt(NetDMG, 32)
+		net.WriteEntity(ent)
+		net.Send(dmginfo:GetAttacker())
     end
-
     if mode == 1 && att:IsPlayer() && att:IsValid() &&  !att:InVehicle() && att:GetMoveType() == NClip then
         if att:IsSuperAdmin() && allowsuperadmins == 0 || !att:IsSuperAdmin() && att:IsAdmin() && allowadmins == 0 then
             dmginfo:ScaleDamage(0)
