@@ -3,7 +3,7 @@ My Reupload and continued support for this great addon.
 
 Workshop Link: http://steamcommunity.com/sharedfiles/filedetails/?id=855177116
 
-#New Commands and ConVars
+# New Commands and ConVars
 
 **Commands**
 ncpvp_menu, a menu availible for superadmins to edit the config of the addon.
