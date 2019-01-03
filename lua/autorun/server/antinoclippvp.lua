@@ -1,81 +1,163 @@
 --[[================================================
-
-				Anti Noclip PVP
-				Made By Joske
-				Modified and re-uploaded by Linkjay
-				@ NigelArmy.com or linkjay1.com
-				Made on the 15th of March 2016
+				Anti Noclip PVP - Joske @ nigelarmy.com
+				Modified & re-uploaded - Linkjay @ linkjay.com
+				Originated 3/15/16
 				Re-uploaded 2/2/17
-				Last modified: 2/2/17 - 1:18 AM PST
---]]--================================================
+				V2 - Zafiro#2602 - 1/2/19 12PM - 1/3/19 5AM
+				Last modified: 1/3/19 
+--]]
+--================================================
+local SH = "ncpvp_"
+util.AddNetWorkString("NCPVP-NetBridge")
+util.AddNetWorkString("NCPVPGui-Open")
+CreateConVar(SH .. "notify", 1, FCVAR_NONE, "Pass 0 to turn off messages, 1 to turn on")
+CreateConVar(SH .. "mode", 1, FCVAR_NONE, "NCPVP Modes, 0 = Attacker can damage other players, 1 = Prevent Damage, 2 = Disable noclip upon attacking, 3 = Disable noclip and damage upon attacking, 4 = Slay attacker")
+CreateConVar(SH .. "mode_admins", FCVAR_NONE, "Allows Admins to damage whilst nocliped, 1 = allow, 0 = disallow")
+CreateConVar(SH .. "mode_sadmins", 1, FCVAR_NONE, "Allows SuperAdmins to damage whilst nocliped, 1 = allow, 0 = disallow")
 
-
-
-CreateConVar( "jcmds_noclip_pvpmode", 1, FCVAR_NONE, "The mode, 0 = nocliper can damager other players, 1 = no damage, 2 = disable noclip upon attack, 3 = disable noclip and damage, 4 = slays the noclip pvper" )
-CreateConVar( "jcmds_noclip_allowadmins", 1, FCVAR_NONE, "Allows Admins to damage whilst nocliped, 1 = allow, 0 = disallow" )
-CreateConVar( "jcmds_noclip_allowsuperadmins", 1, FCVAR_NONE, "Allows SuperAdmins to damage whilst nocliped, 1 = allow, 0 = disallow" )
-
-hook.Add("EntityTakeDamage", "linkantinoclipdmg", function(ent, dmginfo)
-	local attacker = dmginfo:GetAttacker()
-	local mode = GetConVarNumber( "jcmds_noclip_pvpmode" )
-	local allowadmins = GetConVarNumber( "jcmds_noclip_allowadmins" )
-	local allowsuperadmins = GetConVarNumber( "jcmds_noclip_allowsuperadmins" )
-
-	if allowsuperadmins == 0 then
-		allowadmins = 0
-	end
-
-	--PrintMessage(1, attacker:GetVehicle():GetClass())
-
-	if mode == 1 then
-		if attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsSuperAdmin() and allowsuperadmins == 1 then -- If ply is superadmin and allow superadmins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsAdmin() and allowadmins == 1 then -- If ply is admin and allow admins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP then -- If attacker is nocliping, disable attackers damage
-			dmginfo:ScaleDamage(0) -- disables damage
-		end
-	elseif mode == 2 then
-		if attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsSuperAdmin() and allowsuperadmins == 1 then -- If ply is superadmin and allow superadmins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsAdmin() and allowadmins == 1 then -- If ply is admin and allow admins = 1 then do nothing
-			--Nothing here
-		elseif	attacker:GetMoveType()==MOVETYPE_NOCLIP then -- If attacker is nocliping, turn off attackers noclip but allow the damage
-			attacker:SetMoveType(MOVETYPE_WALK) --  turns off noclip
-		end
-	elseif mode == 3 then
-		if attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsSuperAdmin() and allowsuperadmins == 1 then -- If ply is superadmin and allow superadmins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsAdmin() and allowadmins == 1 then -- If ply is admin and allow admins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP then -- If attacker is nocliping, turn off attackers noclip and disallow damage whilst nocliped
-			attacker:SetMoveType(MOVETYPE_WALK) -- turns off noclip
-			dmginfo:ScaleDamage(0) -- disables damage
-		end
-	elseif mode == 4 then
-		if attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsSuperAdmin() and allowsuperadmins == 1 then -- If ply is superadmin and allow superadmins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP and attacker:IsValid() and attacker:IsAdmin() and allowadmins == 1 then -- If ply is admin and allow admins = 1 then do nothing
-			--Nothing here
-		elseif attacker:GetMoveType()==MOVETYPE_NOCLIP then 
-			dmginfo:ScaleDamage(0) -- disables damage
-			timer.Simple( 0.1, function() attacker:KillSilent() -- Slays player
-				attacker:SendLua( "chat.AddText( Color( 0, 255, 0), '[JCMDS] ', Color( 0, 255, 255 ), 'You were slayed for pvping whilst in noclip')" ) -- notifies player
-			end)
-		end
-	end
+concommand.Add(SH .. "credits", function(ply)
+    ply:SendLua("print( [[Joske(nigelarmy.com) - Original Script/Idea, Linkjay(linkjay1.com) - Reupload/Modifications, Zafiro(#2602) - V2 Redux]] )")
 end)
 
-hook.Add("PlayerEnteredVehicle", "linkantinoclipseatfix", function(ply, vehicle, role)
-	ply:SetMoveType(MOVETYPE_WALK)
+local NClip = 8 -- user friendliness 
+local antispam = 0
+local ncpvp_mode_admins = GetConVar(SH .. "mode_admins")
+local ncpvp_mode_sadmins = GetConVar(SH .. "mode_sadmins")
+local ncpvp_mode = GetConVar(SH .. "mode")
+local ncpvp_notify = GetConVar(SH .. " not")
+
+hook.Add("EntityTakeDamage", "NCPVPScale", function(ent, dmginfo)
+    local notify = ncpvp_notify:GetInt()
+    local mode = ncpvp_mode:GetInt()
+    local allowadmins = ncpvp_mode_admins:GetInt()
+    local allowsuperadmins = ncpvp_mode_sadmins:GetInt()
+    local att = dmginfo:GetAttacker()
+
+    local function NCSendMsg()
+        antispam = 1
+
+        timer.Simple(1, function()
+            antispam = 0
+        end)
+
+        att:SendLua("chat.AddText( Color( 0, 255, 0), '[NCPVP] ', Color( 0, 255, 255 ), 'Redacted ' .. tostring(meme)  .. ' damage to ent'  )")
+    end
+
+    if mode == 1 && att:IsPlayer() && att:IsValid() &&  !att:InVehicle() && att:GetMoveType() == NClip then
+        if att:IsSuperAdmin() && allowsuperadmins == 0 || !att:IsSuperAdmin() && att:IsAdmin() && allowadmins == 0 then
+            dmginfo:ScaleDamage(0)
+
+            if ent:IsPlayer() && antispam == 0 && notify == 1 then
+                NCSendMsg()
+            end
+        end
+
+        if !att:IsAdmin() || !att:IsSuperAdmin() then
+            if att:IsAdmin() then
+            else
+                dmginfo:ScaleDamage(0)
+
+                if ent:IsPlayer() && antispam == 0 && notify == 1 then
+                    NCSendMsg()
+                end
+            end
+        end
+    end
+
+    if mode == 2 && att:IsPlayer() && ent:IsPlayer() && att:IsValid() && !att:InVehicle() && att:GetMoveType() == NClip then
+        if att:IsSuperAdmin() && allowsuperadmins == 0 || !att:IsSuperAdmin() && att:IsAdmin() && allowadmins ~= 1 then
+            att:SetMoveType(2)
+
+            if ent:IsPlayer() && antispam == 0 && notify == 1 then
+                NCSendMsg()
+            end
+        end
+
+        if !att:IsAdmin() || !att:IsSuperAdmin() then
+            if att:IsAdmin() then
+            else
+                att:SetMoveType(2)
+            end
+        end
+    end
+
+    if mode == 3 && att:IsPlayer() && ent:IsPlayer() && att:IsValid() &&  !att:InVehicle() && att:GetMoveType() == NClip then
+        if att:IsSuperAdmin() && allowsuperadmins == 0 ||  !att:IsSuperAdmin() && att:IsAdmin() && allowadmins ~= 1 then
+            dmginfo:ScaleDamage(0)
+            att:SetMoveType(2)
+
+            if ent:IsPlayer() && antispam == 0 && notify == 1 then
+                NCSendMsg()
+            end
+        elseif  !att:IsAdmin() ||  !att:IsSuperAdmin() then
+            if att:IsAdmin() then
+            else
+                dmginfo:ScaleDamage(0)
+                att:SetMoveType(2)
+
+                if ent:IsPlayer() && antispam == 0 && notify == 1 then
+                    NCSendMsg()
+                end
+            end
+        end
+    end
+
+    if mode == 4 && att:IsPlayer() && ent:IsPlayer() && att:IsValid() &&  !att:InVehicle() && att:GetMoveType() == NClip then
+        if att:IsSuperAdmin() && allowsuperadmins == 0 ||  !att:IsSuperAdmin() && att:IsAdmin() && allowadmins ~= 1 then
+            dmginfo:ScaleDamage(0) -- disables damage
+            att:KillSilent()
+
+            if notify == 1 then
+                att:SendLua("chat.AddText( Color( 0, 255, 0), '[NCPVP] ', Color( 0, 255, 255 ), 'You were slayed for pvping while in noclip.')")
+            end
+        elseif  !att:IsAdmin() ||  !att:IsSuperAdmin() then
+            if att:IsAdmin() then
+            else
+                dmginfo:ScaleDamage(0) -- disables damage
+                att:KillSilent()
+
+                if notify == 1 then
+                    att:SendLua("chat.AddText( Color( 0, 255, 0), '[NCPVP] ', Color( 0, 255, 255 ), 'You were slayed for pvping while in noclip.')")
+                end
+            end
+        end
+    end
 end)
 
+concommand.Add(SH .. "menu", function(ply)
+    if ply:IsValid() && ply:IsPlayer() && ply:IsSuperAdmin() then
+        net.Start("NCPVPGui-Open")
+        net.Send(ply)
+    else
+        ply:PrintMessage(2, "Access Denied.")
+        print(ply:Nick() .. "(" .. ply:SteamID() .. " | " .. ply:IPAddress() .. ") tried to access the NCPVP GUI.")
+    end
+end)
 
--- Credits Command
-concommand.Add( "jcmds_noclip_credits", function( ply )
-	ply:SendLua( "chat.AddText( Color( 0, 255, 0), '[JCMDS] ', Color( 0, 255, 255 ), [[Joske's Anti Noclip PVP Made By]])") 
-	ply:SendLua( "chat.AddText( Color( 0, 255, 0), '[JCMDS] ', Color( 0, 255, 255 ), 'Joske @ nigelarmy.com on the 15th of March, 2016')") 	
-	ply:SendLua( "chat.AddText( Color( 0, 255, 0), '[JCMDS] ', Color( 0, 255, 255 ), 'Modified and re-uploaded by')") 	
-	ply:SendLua( "chat.AddText( Color( 0, 255, 0), '[JCMDS] ', Color( 0, 255, 255 ), 'Linkjay @ linkjay1.com on 2/2/17')") 	
-	ply:SendLua( "print( [[Joske's Anti Noclip PVP Made By \n Joske @ nigelarmy.com \n on the 15th of March, 2016 \n Modified and re-uploaded by \n Linkjay @ linkjay1.com on 2/2/17]] )")
+net.Receive("NCPVP-NetBridge", function(len, ply)
+    if ply:IsValid() && ply:IsSuperAdmin() then
+        local NCN = net.ReadTable()
+
+        for k, v in pairs(NCN.clientdata) do
+            if k == "modecv" && v ~= nil then
+                ncpvp_mode:SetInt(v)
+                print("Set mode to", ncpvp_mode:GetInt())
+            end
+
+            if k == "notifycv" && v ~= nil then
+                ncpvp_notify:SetInt(v)
+                print("Set notify mode to ", ncpvp_notify:GetInt())
+            end
+
+            if k == "allowadminscv" && v ~= nil then
+                ncpvp_mode_admins:SetInt(v)
+                print("Set Admin mode to ", ncpvp_mode_admins:GetInt())
+            end
+
+            if k == "allowsadminscv" && v ~= nil then
+                ncpvp_mode_sadmins:SetInt(v)
+                print("Set SuperAdmin mode to ", ncpvp_mode_sadmins:GetInt())
+            end
+        end
+    end
 end)
