@@ -3,12 +3,12 @@ My Reupload and continued support for this great addon.
 
 Workshop Link: http://steamcommunity.com/sharedfiles/filedetails/?id=855177116
 
-**New Commands and ConVars**
+#New Commands and ConVars
 
-*Commands*
+**Commands**
 ncpvp_menu, a menu availible for superadmins to edit the config of the addon.
 
-*CVars*
+**CVars**
 Name | Input | Default | Effect
 "ncpvp_notify" "0-1 "1" "On and off switch for clientside messages to the attacker."
 "ncpvp_mode" "0-4" "1" "0 = No damage mitigation, 1 = Damage mitigation while attacker is noclipping, 2 = Force attacker to walk upon attacking in noclip, 3 = 2 + Damage mitigation, 4 = Slay the attacker."
