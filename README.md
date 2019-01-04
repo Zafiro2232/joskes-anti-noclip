@@ -15,6 +15,6 @@ Name | Input | Default | Effect
 
 "ncpvp_mode" "0-4" "1" "0 = No damage mitigation, 1 = Damage mitigation while attacker is noclipping, 2 = Force attacker to walk upon attacking in noclip, 3 = 2 + Damage mitigation, 4 = Slay the attacker."
 
-"mode_admins" "0-1" "On and off switch for letting admins bypass the rules"
+"mode_admins" "0-1" "1" On and off switch for letting admins bypass the rules"
 
-"mode_sadmins" "0-1" "On and off switch for letting superadmins bypass the rules"
+"mode_sadmins" "0-1" "1" "On and off switch for letting superadmins bypass the rules"
